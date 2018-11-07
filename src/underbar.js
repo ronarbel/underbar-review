@@ -326,6 +326,23 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var processedResults = {};
+    var result;
+    // return function:
+    // if argument passed into function exists as a processedResults key,
+    // return value of that key
+    // else use func
+
+    return function() {
+      if (processedResults[arguments] !== undefined) {
+        return processedResults[arguments];
+      } else {
+        result = func.apply(this, arguments);
+        processedResults[arguments] = result;
+      }
+      // The new function always returns the originally computed result.
+      return result;
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
