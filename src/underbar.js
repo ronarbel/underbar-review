@@ -327,23 +327,32 @@
   // instead if possible.
   _.memoize = function(func) {
     var processedResults = {};
-    var result;
-    // return function:
-    // if argument passed into function exists as a processedResults key,
-    // return value of that key
-    // else use func
-
     return function() {
-      if (processedResults[arguments] !== undefined) {
-        return processedResults[arguments];
-      } else {
-        result = func.apply(this, arguments);
-        processedResults[arguments] = result;
+      var args = JSON.stringify(arguments);
+      if (processedResults[args] === undefined) {
+        processedResults[args] = func.apply(this, arguments);
       }
-      // The new function always returns the originally computed result.
-      return result;
+      return processedResults[args];
     };
   };
+
+  // var processedResults = {};
+  // var result;
+  // // return function:
+  // // if argument passed into function exists as a processedResults key,
+  // // return value of that key
+  // // else use func
+  //
+  // return function() {
+  //   if (processedResults[arguments] !== undefined) {
+  //     return processedResults[arguments];
+  //   } else {
+  //     result = func.apply(this, arguments);
+  //     processedResults[arguments] = result;
+  //   }
+  //   // The new function always returns the originally computed result.
+  //   return result;
+  // };
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -352,6 +361,10 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    setTimeout(function() {
+      func.apply(this, args);
+    }, wait);
   };
 
 
@@ -366,6 +379,15 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var modArr = array.slice(0);
+    var result = [];
+
+    while (modArr.length > 0) {
+      var randomIndex = Math.floor(Math.random() * modArr.length - 1);
+      var randomElement = modArr.splice(randomIndex, 1);
+      result.push(randomElement[0]);
+    }
+    return result;
   };
 
 
